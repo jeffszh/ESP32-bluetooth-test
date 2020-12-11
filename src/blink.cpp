@@ -1,6 +1,5 @@
 #include "blink.h"
 #include "main.h"
-#include "timerTest.h"
 
 static void blinkLoop() {
 	static int phase = 0;
@@ -16,8 +15,7 @@ static void blinkLoop() {
 		digitalWrite(BUILTIN_LED, LOW);
 		break;
 	case 7:
-		Serial.print("时间片：");
-		Serial.println(getTimeTick());
+		Serial.println("很好！");
 		break;
 	default:
 		break;
