@@ -25,7 +25,8 @@ static void blueToothLoop() {
 }
 
 void blueToothSetup() {
-	BLEDevice::init("");
+	BLEDevice::init("JeffBLE");
+	BLEDevice::getAdvertising()->start();
 	pBLEScan = BLEDevice::getScan(); //create new scan
 	pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
 	pBLEScan->setActiveScan(true); //active scan uses more power, but get results faster
