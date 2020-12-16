@@ -29,8 +29,7 @@
 
 BLEServer *pServer = NULL;
 BLECharacteristic *pTxCharacteristic;
-bool deviceConnected = false;
-bool oldDeviceConnected = false;
+int notConnectedCount = 1;
 uint8_t txValue = 0;
 
 // See the following for generating UUIDs:
@@ -42,11 +41,13 @@ uint8_t txValue = 0;
 
 class MyServerCallbacks : public BLEServerCallbacks {
 	void onConnect(BLEServer *pServer) {
-		deviceConnected = true;
+		notConnectedCount = 0;
 	};
 
 	void onDisconnect(BLEServer *pServer) {
-		deviceConnected = false;
+		if (notConnectedCount == 0) {
+			notConnectedCount = 1;
+		}
 	}
 };
 
@@ -67,15 +68,15 @@ class MyCallbacks : public BLECharacteristicCallbacks {
 };
 
 static void blueToothLoop() {
-	if (deviceConnected) {
+	if (notConnectedCount == 0) {
 		pTxCharacteristic->setValue(&txValue, 1);
 		pTxCharacteristic->notify();
 		txValue++;
-	} else if (!deviceConnected && oldDeviceConnected) {
+	} else if (++notConnectedCount >= 6) {
+		notConnectedCount = 1;
 		pServer->startAdvertising(); // restart advertising
 		Serial.println("开始发布");
 	}
-	oldDeviceConnected = deviceConnected;
 }
 
 void blueToothSetup() {
